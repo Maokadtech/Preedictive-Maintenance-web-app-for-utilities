@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Predictive Maintenance{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="logo">
+            <span class="logo-icon">⚡</span>
+            <span class="logo-text">Utility Maint</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/" class="{% if request.path == '/' %}active{% endif %}">
+                <span class="nav-icon">📊</span> PREDICT
+            </a></li>
+            <li><a href="/machines" class="{% if request.path.startswith('/machine') %}active{% endif %}">
+                <span class="nav-icon">🏭</span> Machines
+            </a></li>
+            </a></li>
+        </ul>
+        <div class="nav-footer">
+            <p><Btn>By Maokadtech</Btn></p>
+            <small>v1.0</small>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <h1>{% block header %}Prediction-Form{% endblock %}</h1>
+            <div class="header-actions">
+                <span class="status-badge online">● Now Live</span>
+            </div>
+        </header>
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

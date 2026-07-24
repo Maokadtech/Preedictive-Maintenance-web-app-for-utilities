@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Machines - Predictive Maintenance{% endblock %}
+{% block header %}Machine Inventory{% endblock %}
+
+{% block content %}
+<div class="filters-bar">
+    <form method="GET" action="/machines" class="filters-form">
+        <select name="type">
+            <option value="">All Types</option>
+            {% for t in machine_types %}
+            <option value="{{ t }}" {% if selected_type==t %}selected{% endif %}>{{ t }}</option>
+            {% endfor %}
+        </select>
+        <select name="criticality">
+            <option value="">All Criticality</option>
+            {% for c in criticality_levels %}
+            <option value="{{ c }}" {% if selected_criticality==c %}selected{% endif %}>{{ c }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn-primary">Filter</button>
+        <a href="/machines" class="btn-secondary">Reset</a>
+    </form>
+    <span class="results-count">{{ total }} machines found</span>
+</div>
+
+<div class="machines-grid">
+    {% for m in machines %}
+    <div class="machine-card {% if m.Failure_Flag %}danger{% elif m.Predictive_Risk_Score > 70 %}warning{% else %}normal{% endif %}">
+        <div class="machine-header">
+            <span class="machine-id">{{ m.Machine_ID }}</span>
+            <span class="status-dot {% if m.Failure_Flag %}red{% elif m.Predictive_Risk_Score > 70 %}orange{% else %}green{% endif %}"></span>
+        </div>
+        <div class="machine-body">
+            <p class="machine-type">{{ m.Machine_Type }}</p>
+            <div class="machine-stats">
+                <div><small>Efficiency</small><strong>{{ "%.1f"|format(m.Efficiency_Score) }}%</strong></div>
+                <div><small>Risk</small><strong>{{ "%.1f"|format(m.Predictive_Risk_Score) }}</strong></div>
+                <div><small>RUL</small><strong>{{ m.Remaining_Useful_Life }}d</strong></div>
+            </div>
+        </div>
+        <div class="machine-footer">
+            <span class="crit-badge {{ m.Criticality_Level|lower }}">{{ m.Criticality_Level }}</span>
+            <a href="/machine/{{ m.Machine_ID }}" class="btn-sm">Details →</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<div class="pagination">
+    {% if page > 1 %}
+    <a href="?page={{ page-1 }}{% if selected_type %}&type={{ selected_type }}{% endif %}{% if selected_criticality %}&criticality={{ selected_criticality }}{% endif %}" class="btn-secondary">← Prev</a>
+    {% endif %}
+    <span>Page {{ page }} of {{ total_pages }}</span>
+    {% if page < total_pages %}
+    <a href="?page={{ page+1 }}{% if selected_type %}&type={{ selected_type }}{% endif %}{% if selected_criticality %}&criticality={{ selected_criticality }}{% endif %}" class="btn-secondary">Next →</a>
+    {% endif %}
+</div>
+{% endblock %}

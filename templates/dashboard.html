@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}Predictive Maintenance web app{% endblock %}
+
+{% block content %}
+
+<div class="predict-section">
+    <h3>🔮 Predict Machine Failure</h3>
+    <form id="predictForm" class="predict-form">
+        <div class="form-row">
+            <select name="Machine_Type" required>
+                <option value="">Select Machine Type</option>
+                {% for t in machine_type_list %}
+                <option value="{{ t }}">{{ t }}</option>
+                {% endfor %}
+            </select>
+            <input type="number" name="Temperature_C" placeholder="Temperature (°C)" step="0.1"  required>
+            <input type="number" name="Vibration_mm_s" placeholder="Vibration (mm/s)" step="0.1" required>
+            <input type="number" name="Pressure_bar" placeholder="Pressure (bar)" step="0.1"required>
+        </div>
+        <div class="form-row">
+            <input type="number" name="Voltage_V" placeholder="Voltage (V)" step="0.1"  required>
+            <input type="number" name="Current_A" placeholder="Current (A)" step="0.1"  required>
+            <input type="number" name="RPM" placeholder="RPM"  required>
+            <input type="number" name="Power_kW" placeholder="Power (kW)" step="0.1" required>
+        </div>
+        <div class="form-row">
+            <input type="number" name="Runtime_Hours" placeholder="Runtime (hrs)" step="0.1"  required>
+            <input type="number" name="Downtime_Hours" placeholder="Downtime (hrs)" step="0.1"  required>
+            <input type="number" name="Utilization_Percent" placeholder="Utilization %" step="0.1"  required>
+            <input type="number" name="Efficiency_Score" placeholder="Efficiency" step="0.1" required>
+        </div>
+        <div class="form-row">
+            <input type="number" name="Sensor_Health_Score" placeholder="Sensor Health" step="0.1" required>
+            <input type="number" name="Predictive_Risk_Score" placeholder="Risk Score" step="0.1" required>
+            <input type="number" name="Days_To_Failure" placeholder="Days to Failure" required>
+        </div>
+        <button type="submit" class="btn-primary">Predict Failure</button>
+    </form>
+    <div id="predictionResult" class="prediction-result"></div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const failureData = {{ failure_by_type|safe }};
+const riskData = {{ risk_dist|safe }};
+const typeData = {{ machine_types|safe }};
+const critData = {{ criticality|safe }};
+
+new Chart(document.getElementById('failureChart'), {
+    type: 'bar',
+    data: {
+        labels: Object.keys(failureData),
+        datasets: [{
+            data: Object.values(failureData),
+            backgroundColor: ['#ef4444','#f97316','#eab308','#3b82f6','#8b5cf6'],
+            borderRadius: 6
+        }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } } }
+});
+
+new Chart(document.getElementById('riskChart'), {
+    type: 'doughnut',
+    data: {
+        labels: Object.keys(riskData),
+        datasets: [{
+            data: Object.values(riskData),
+            backgroundColor: ['#22c55e','#eab308','#f97316','#ef4444'],
+            borderWidth: 0
+        }]
+    },
+    options: { responsive: true, cutout: '60%' }
+});
+
+new Chart(document.getElementById('typeChart'), {
+    type: 'pie',
+    data: {
+        labels: Object.keys(typeData),
+        datasets: [{
+            data: Object.values(typeData),
+            backgroundColor: ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899'],
+            borderWidth: 0
+        }]
+    },
+    options: { responsive: true }
+});
+
+new Chart(document.getElementById('critChart'), {
+    type: 'polarArea',
+    data: {
+        labels: Object.keys(critData),
+        datasets: [{
+            data: Object.values(critData),
+            backgroundColor: ['#22c55e','#eab308','#f97316','#ef4444'],
+            borderWidth: 0
+        }]
+    },
+    options: { responsive: true, scales: { r: { ticks: { display: false } } } }
+});
+</script>
+{% endblock %}

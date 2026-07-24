@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}{{ machine.Machine_ID }} - Machine Detail{% endblock %}
+{% block header %}Machine {{ machine.Machine_ID }}{% endblock %}
+
+{% block content %}
+<div class="detail-grid">
+    <div class="detail-card status-card {% if machine.Failure_Flag %}danger{% elif machine.Predictive_Risk_Score > 70 %}warning{% else %}normal{% endif %}">
+        <h3>Status</h3>
+        <div class="status-big">
+            {% if machine.Failure_Flag %}
+                <span class="status-text fail">❌ FAILED</span>
+                <p>Failure Type: <strong>{{ machine.Failure_Type }}</strong></p>
+            {% elif machine.Predictive_Risk_Score > 70 %}
+                <span class="status-text warn">⚠️ HIGH RISK</span>
+                <p>Immediate attention required</p>
+            {% else %}
+                <span class="status-text ok">✅ OPERATIONAL</span>
+                <p>Running within normal parameters</p>
+            {% endif %}
+        </div>
+        <div class="status-meta">
+            <div><small>Criticality</small><span class="crit-badge {{ machine.Criticality_Level|lower }}">{{ machine.Criticality_Level }}</span></div>
+            <div><small>Battery</small><span>{{ machine.Battery_Backup_Status }}</span></div>
+        </div>
+    </div>
+
+    <div class="detail-card">
+        <h3>Key Metrics</h3>
+        <div class="metrics-grid">
+            <div class="metric">
+                <span class="metric-val">{{ "%.1f"|format(machine.Temperature_C) }}°C</span>
+                <span class="metric-label">Temperature</span>
+            </div>
+            <div class="metric">
+                <span class="metric-val">{{ "%.1f"|format(machine.Vibration_mm_s) }}</span>
+                <span class="metric-label">Vibration</span>
+            </div>
+            <div class="metric">
+                <span class="metric-val">{{ "%.1f"|format(machine.Pressure_bar) }} bar</span>
+                <span class="metric-label">Pressure</span>
+            </div>
+            <div class="metric">
+                <span class="metric-val">{{ "%.1f"|format(machine.Voltage_V) }}V</span>
+                <span class="metric-label">Voltage</span>
+            </div>
+            <div class="metric">
+                <span class="metric-val">{{ "%.1f"|format(machine.Current_A) }}A</span>
+                <span class="metric-label">Current</span>
+            </div>
+            <div class="metric">
+                <span class="metric-val">{{ machine.RPM }}</span>
+                <span class="metric-label">RPM</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-card">
+        <h3>Performance</h3>
+        <div class="performance-bars">
+            <div class="perf-item">
+                <label>Efficiency</label>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width:{{ machine.Efficiency_Score }}%;background:#3b82f6"></div>
+                </div>
+                <span>{{ "%.1f"|format(machine.Efficiency_Score) }}%</span>
+            </div>
+            <div class="perf-item">
+                <label>Utilization</label>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width:{{ machine.Utilization_Percent }}%;background:#10b981"></div>
+                </div>
+                <span>{{ "%.1f"|format(machine.Utilization_Percent) }}%</span>
+            </div>
+            <div class="perf-item">
+                <label>Sensor Health</label>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width:{{ machine.Sensor_Health_Score }}%;background:#8b5cf6"></div>
+                </div>
+                <span>{{ "%.1f"|format(machine.Sensor_Health_Score) }}%</span>
+            </div>
+            <div class="perf-item">
+                <label>Risk Score</label>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width:{{ machine.Predictive_Risk_Score }}%;background:{% if machine.Predictive_Risk_Score > 70 %}#ef4444{% elif machine.Predictive_Risk_Score > 40 %}#f97316{% else %}#22c55e{% endif %}"></div>
+                </div>
+                <span>{{ "%.1f"|format(machine.Predictive_Risk_Score) }}</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="detail-card">
+        <h3>Maintenance Info</h3>
+        <div class="info-list">
+            <div class="info-row"><span>Last Maintenance</span><strong>{{ machine.Last_Maintenance_Date }}</strong></div>
+            <div class="info-row"><span>Maintenance Type</span><strong>{{ machine.Maintenance_Type }}</strong></div>
+            <div class="info-row"><span>Team</span><strong>{{ machine.Maintenance_Team }}</strong></div>
+            <div class="info-row"><span>Parts Replaced</span><strong>{{ machine.Spare_Parts_Replaced }}</strong></div>
+            <div class="info-row"><span>Runtime</span><strong>{{ "%.0f"|format(machine.Runtime_Hours) }} hrs</strong></div>
+            <div class="info-row"><span>Downtime</span><strong>{{ "%.0f"|format(machine.Downtime_Hours) }} hrs</strong></div>
+            <div class="info-row"><span>Days to Failure</span><strong>{{ machine.Days_To_Failure }}</strong></div>
+            <div class="info-row"><span>Remaining Life</span><strong>{{ machine.Remaining_Useful_Life }} days</strong></div>
+            <div class="info-row"><span>Cost</span><strong>${{ "%.0f"|format(machine.Maintenance_Cost_USD) }}</strong></div>
+        </div>
+    </div>
+</div>
+
+<a href="/machines" class="btn-secondary back-btn">← Back to Machines</a>
+{% endblock %}
