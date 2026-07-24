@@ -53,7 +53,7 @@
     {% endif %}
     <span>Page {{ page }} of {{ total_pages }}</span>
     {% if page < total_pages %}
-    <a href="?page={{ page+1 }}{% if selected_type %}&type={{ selected_type }}{% endif %}{% if selected_criticality %}&criticality={{ selected_criticality }}{% endif %}" class="btn-secondary">Next →</a>
+    <a href="?page={{ page+1 }}{% if selected_typendehd %}&type={{ selected_type }}{% endif %}{% if selected_criticality %}&criticality={{ selected_criticality }}{% endif %}" class="btn-secondary">Next →</a>
     {% endif %}
 </div>
 {% endblock %}
